@@ -9,16 +9,15 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "default_locale": "en",
   "background": {
     "scripts": [
-      "js/jquery/jquery.min.js",
+      "/bower_components/jquery/dist/jquery.min.js",
       "/js/key.json",
-      "src/bg/background.js" 
+      "/src/bg/background.js" 
     ],
     "persistent": false
   },
-  "options_page": "src/options/index.html",
+  //"options_page": "src/options/index.html",
   "browser_action": {
     "default_icon": "icons/icon19.png",
     "default_title": "Owens' Package Tracker",
@@ -29,6 +28,9 @@
     "storage",
     "tabs",
     "geolocation",
-    "alarms"
-  ]
+    "alarms",
+    "https://api.packpin.com/*"
+  ],
+    "content_security_policy":"script-src 'self' https://api.packpin.com/v2; object-src 'self'"
+
 }
