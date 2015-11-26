@@ -33,7 +33,10 @@ var makeRequest = function(trackingNumber, title) {
             console.log('Status:', this.status);
             console.log('Headers:', this.getAllResponseHeaders());
             console.log('Body:', this.responseText);
-            console.log(typeof(this.responseText));
+			     	var jsonified = JSON.parse(this.responseText);
+
+           	$('#package-table tr:last').after('<tr data-code="' + jsonified.body.items.code+ '" data-carrier="'+ jsonified.body.items.carrier_code + '"><td>' + jsonified.body.items.description+'</td><td>'+jsonified.body.items.status+'</td><td>' + jsonified.body.items.estimated_delivery+'</td><td>'+ '<img class="deleter" src="../../icons/minus.svg"></td>');
+
         }
     };
 
