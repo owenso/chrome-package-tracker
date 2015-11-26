@@ -5,3 +5,7 @@ html{
 #saved-packages{
 	margin-top: 20px;
 }
+
+#package-table img{
+	width:1em;
+}

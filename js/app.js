@@ -12,6 +12,12 @@ var takeTracking = function() {
 };
 
 
+
+
+
+
+
+////CREATE
 var makeRequest = function(trackingNumber, title) {
     console.log(trackingNumber);
     var request = new XMLHttpRequest();
@@ -28,21 +34,6 @@ var makeRequest = function(trackingNumber, title) {
             console.log('Headers:', this.getAllResponseHeaders());
             console.log('Body:', this.responseText);
             console.log(typeof(this.responseText));
-            // var jsonified = JSON.parse(this.responseText);
-            // var packageObject = {
-            //     title: title,
-            //     status: jsonified.body.items[0].status,
-            //     est_del: jsonified.body.items[0].estimated_delivery,
-            //     details: jsonified.body.items[0].track_details,
-            //     carrier: jsonified.body.items[0].carrier_code,
-            //     dest_zip: jsonified.body.items[0].destination_zip,
-            // };
-
-            // chrome.storage.sync.set({
-            //     trackingNumber: packageObject
-            // }, function() {
-            //     console.log('saved to synced storage');
-            // });
         }
     };
 
@@ -55,6 +46,7 @@ var makeRequest = function(trackingNumber, title) {
 
 };
 
+//INDEX
 var fillPage = function() {
 
     var request = new XMLHttpRequest();
@@ -72,11 +64,39 @@ var fillPage = function() {
 			     	var jsonified = JSON.parse(this.responseText);
 
 			     	for (var i=0; i<jsonified.body.items.length; i++){
-			     		console.log('running x times:');
-			     		console.log(i);
-			      	$('#package-table tr:last').after('<tr><td>'+jsonified.body.items[i].description+'</td><td>'+jsonified.body.items[i].status+'</td><td>' + jsonified.body.items[i].estimated_delivery+'</td>');
+			      	$('#package-table tr:last').after('<tr data-code="' + jsonified.body.items[i].code+ '" data-carrier="'+ jsonified.body.items[i].carrier_code + '"><td>' + jsonified.body.items[i].description+'</td><td>'+jsonified.body.items[i].status+'</td><td>' + jsonified.body.items[i].estimated_delivery+'</td><td>'+ '<img class="deleter" src="../../icons/minus.svg"></td>');
 			     	}
+
+			     	$('.deleter').click(deletePkg);
+
         }
     };
     request.send();
 };
+
+//DELETE
+var deletePkg = function(){
+	var deleteCode = $(this).closest("tr").data().code;
+	var deleteCarrier = $(this).closest("tr").data().carrier;
+	$(this).closest("tr").remove();
+
+	var request = new XMLHttpRequest();
+
+	request.open('DELETE', 'https://api.packpin.com/v2/trackings/'+deleteCarrier + '/' + deleteCode);
+	request.setRequestHeader('packpin-api-key', mydata.packPinKey);
+  request.setRequestHeader('Content-Type', 'application/json');
+
+	request.onreadystatechange = function () {
+	  if (this.readyState === 4) {
+	    console.log('Status:', this.status);
+	    console.log('Headers:', this.getAllResponseHeaders());
+	    //console.log('Body:', this.responseText);
+	  }
+	};
+
+	request.send();
+
+};
+
+
+fillPage();
