@@ -35,7 +35,7 @@ var makeRequest = function(trackingNumber, title) {
             console.log('Body:', this.responseText);
 			     	var jsonified = JSON.parse(this.responseText);
 
-           	$('#package-table tr:last').after('<tr data-code="' + jsonified.body.items.code+ '" data-carrier="'+ jsonified.body.items.carrier_code + '"><td>' + jsonified.body.items.description+'</td><td>'+jsonified.body.items.status+'</td><td>' + jsonified.body.items.estimated_delivery+'</td><td>'+ '<img class="deleter" src="../../icons/minus.svg"></td>');
+           	$('#package-table tr:last').after('<tr class ="pkg-row" data-code="' + jsonified.body.items.code+ '" data-carrier="'+ jsonified.body.items.carrier_code + '"><td>' + jsonified.body.items.description+'</td><td>'+jsonified.body.items.status+'</td><td>' + jsonified.body.items.estimated_delivery+'</td><td>'+ '<img class="deleter" src="../../icons/minus.svg"></td>');
 
         }
     };
@@ -67,10 +67,11 @@ var fillPage = function() {
 			     	var jsonified = JSON.parse(this.responseText);
 
 			     	for (var i=0; i<jsonified.body.items.length; i++){
-			      	$('#package-table tr:last').after('<tr data-code="' + jsonified.body.items[i].code+ '" data-carrier="'+ jsonified.body.items[i].carrier_code + '"><td>' + jsonified.body.items[i].description+'</td><td>'+jsonified.body.items[i].status+'</td><td>' + jsonified.body.items[i].estimated_delivery+'</td><td>'+ '<img class="deleter" src="../../icons/minus.svg"></td>');
+			      	$('#package-table tr:last').after('<tr class ="pkg-row" data-code="' + jsonified.body.items[i].code+ '" data-carrier="'+ jsonified.body.items[i].carrier_code + '"><td>' + jsonified.body.items[i].description+'</td><td>'+jsonified.body.items[i].status+'</td><td>' + jsonified.body.items[i].estimated_delivery+'</td><td>'+ '<img class="deleter" src="../../icons/minus.svg"></td>');
 			     	}
 
 			     	$('.deleter').click(deletePkg);
+			     	$('.pkg-row').click(showOne);
 
         }
     };
@@ -101,5 +102,28 @@ var deletePkg = function(){
 
 };
 
+
+//SHOW
+var showOne = function(){
+	var showCode = $(this).closest("tr").data().code;
+	var showCarrier = $(this).closest("tr").data().carrier;
+
+	
+	var request = new XMLHttpRequest();
+
+	request.open('GET', 'https://api.packpin.com/v2/trackings/'+ showCarrier + '/' + showCode);
+	request.setRequestHeader('packpin-api-key', mydata.packPinKey);
+  request.setRequestHeader('Content-Type', 'application/json');
+
+	request.onreadystatechange = function () {
+	  if (this.readyState === 4) {
+	    console.log('Status:', this.status);
+	    console.log('Headers:', this.getAllResponseHeaders());
+	    console.log('Body:', this.responseText);
+	  }
+	};
+
+	request.send();
+};
 
 fillPage();
